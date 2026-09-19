@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>DayFIT — Seu treino. Sua alimentação. Sua evolução.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===== AUTH SCREEN (login / cadastro) ===== -->
+<div class="auth-screen" id="authScreen">
+  <div class="auth-card">
+    <div class="brand" style="justify-content:center; padding-bottom:6px;">
+      <span class="brand-mark">D</span><span class="brand-name">DayFIT</span>
+    </div>
+    <p class="auth-tagline">Seu treino. Sua alimentação. Sua evolução.</p>
+
+    <div class="subtabs" data-group="auth" style="margin:22px auto 18px;">
+      <button class="subtab is-active" data-sub="login">Entrar</button>
+      <button class="subtab" data-sub="cadastro">Criar conta</button>
+    </div>
+
+    <div class="subview is-active" id="sub-login">
+      <div class="field-row"><label>E-mail</label><input type="email" id="loginEmail" placeholder="voce@email.com" autocomplete="email"></div>
+      <div class="field-row"><label>Senha</label><input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"></div>
+      <p class="auth-error" id="loginError" hidden></p>
+      <button class="btn btn--primary" id="btnLogin" style="width:100%">Entrar</button>
+    </div>
+
+    <div class="subview" id="sub-cadastro">
+      <div class="field-row"><label>Nome</label><input type="text" id="regName" placeholder="Seu nome"></div>
+      <div class="field-row"><label>E-mail</label><input type="email" id="regEmail" placeholder="voce@email.com" autocomplete="email"></div>
+      <div class="field-row"><label>Senha</label><input type="password" id="regPassword" placeholder="mínimo 6 caracteres" autocomplete="new-password"></div>
+      <p class="auth-error" id="regError" hidden></p>
+      <button class="btn btn--primary" id="btnRegister" style="width:100%">Criar conta grátis</button>
+    </div>
+
+    <p class="auth-footnote">Seus dados ficam salvos com segurança no servidor do DayFIT — nada de perder progresso ao trocar de aparelho.</p>
+  </div>
+</div>
+
+<div class="app" id="app">
+
+  <!-- ===== SIDEBAR (desktop) ===== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">D</span>
+      <span class="brand-name">DayFIT</span>
+    </div>
+
+    <nav class="side-nav" id="sideNav">
+      <button class="nav-item is-active" data-view="dashboard"><span class="nav-ico">◆</span>Início</button>
+      <button class="nav-item" data-view="nutrition"><span class="nav-ico">◇</span>Nutrição</button>
+      <button class="nav-item" data-view="workouts"><span class="nav-ico">▲</span>Treinos</button>
+      <button class="nav-item" data-view="goals"><span class="nav-ico">●</span>Metas</button>
+      <button class="nav-item" data-view="evolution"><span class="nav-ico">▶</span>Evolução</button>
+      <button class="nav-item" data-view="profile"><span class="nav-ico">■</span>Perfil</button>
+    </nav>
+
+    <div class="side-footer">
+      <div class="streak-chip">🔥 <span id="sideStreak">12</span> dias seguidos</div>
+      <button class="upgrade-btn" data-view="subscription">Torne-se PRO</button>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <main class="main">
+
+    <!-- top bar (mobile) -->
+    <header class="topbar">
+      <div class="brand brand--mobile"><span class="brand-mark">D</span><span class="brand-name">DayFIT</span></div>
+      <button class="icon-btn" id="topbarProfileBtn" aria-label="Perfil">👤</button>
+    </header>
+
+    <!-- ============ DASHBOARD ============ -->
+    <section class="view is-active" id="view-dashboard">
+      <div class="view-head">
+        <div>
+          <h1 id="greeting">Bom dia, Gabriel 👋</h1>
+          <p class="subtitle">Veja como está seu dia.</p>
+        </div>
+        <div class="level-pill" data-view="evolution">
+          <span>Nível <strong id="dashLevel">7</strong></span>
+          <div class="xp-mini"><div class="xp-mini-fill" id="dashXpFill"></div></div>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card" data-stat="calories">
+          <div class="stat-top"><span class="stat-ico">🔥</span><span class="stat-label">Calorias</span></div>
+          <div class="stat-value"><span id="statCalNow">1.840</span> <span class="stat-of">/ <span id="statCalGoal">2.400</span> kcal</span></div>
+          <div class="bar"><div class="bar-fill bar-fill--orange" id="barCal"></div></div>
+        </div>
+        <div class="stat-card" data-stat="protein">
+          <div class="stat-top"><span class="stat-ico">🥩</span><span class="stat-label">Proteínas</span></div>
+          <div class="stat-value"><span id="statProtNow">128</span> <span class="stat-of">/ <span id="statProtGoal">160</span> g</span></div>
+          <div class="bar"><div class="bar-fill" id="barProt"></div></div>
+        </div>
+        <div class="stat-card" data-stat="water">
+          <div class="stat-top"><span class="stat-ico">💧</span><span class="stat-label">Água</span></div>
+          <div class="stat-value"><span id="statWaterNow">1,8</span> <span class="stat-of">/ <span id="statWaterGoal">2,5</span> L</span></div>
+          <div class="bar"><div class="bar-fill bar-fill--blue" id="barWater"></div></div>
+        </div>
+        <div class="stat-card" data-stat="workout">
+          <div class="stat-top"><span class="stat-ico">🏋️</span><span class="stat-label">Treino</span></div>
+          <div class="stat-value"><span id="statWorkoutMin">58</span> <span class="stat-of">min hoje</span></div>
+          <div class="bar"><div class="bar-fill bar-fill--purple" id="barWorkout" style="width:76%"></div></div>
+        </div>
+      </div>
+
+      <div class="panel-row">
+        <div class="panel goal-panel">
+          <div class="panel-head">
+            <h2>Seu objetivo</h2>
+            <button class="link-btn" data-view="goals">ajustar</button>
+          </div>
+          <div class="goal-title" id="goalObjectiveName">Ganho de massa</div>
+          <div class="goal-mini-grid">
+            <div><span>Meta calórica</span><strong id="goalMiniCal">2.400 kcal</strong></div>
+            <div><span>Meta de proteína</span><strong id="goalMiniProt">160 g</strong></div>
+            <div><span>Meta de água</span><strong id="goalMiniWater">2,5 L</strong></div>
+            <div><span>Treinos/semana</span><strong id="goalMiniWorkouts">5</strong></div>
+          </div>
+        </div>
+
+        <div class="panel today-workout-panel">
+          <div class="panel-head"><h2>Treino de hoje</h2></div>
+          <div class="today-workout">
+            <div class="today-workout-name" id="todayWorkoutName">Peito + Tríceps</div>
+            <div class="today-workout-meta"><span id="todayWorkoutCount">12 exercícios</span> · <span id="todayWorkoutTime">≈ 55 min</span></div>
+            <button class="btn btn--primary" id="btnStartTodayWorkout">Começar treino</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h2>Ações rápidas</h2></div>
+        <div class="quick-grid">
+          <button class="quick-btn" id="qaAnalyze"><span>📸</span>Analisar prato</button>
+          <button class="quick-btn" id="qaMeal"><span>🍽️</span>Registrar refeição</button>
+          <button class="quick-btn" id="qaWorkout"><span>🏋️</span>Começar treino</button>
+          <button class="quick-btn" id="qaWater"><span>💧</span>Registrar água</button>
+          <button class="quick-btn" id="qaWeight"><span>⚖️</span>Registrar peso</button>
+        </div>
+      </div>
+
+      <div class="panel-row">
+        <div class="panel progress-panel">
+          <div class="panel-head"><h2>Seu progresso</h2><span class="muted-tag">30 dias</span></div>
+          <canvas id="weightChartMini" height="140"></canvas>
+        </div>
+        <div class="panel streak-panel">
+          <div class="streak-flame">🔥</div>
+          <div class="streak-number"><span id="streakDaysBig">12</span> dias</div>
+          <div class="streak-caption">de sequência no DayFIT</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ NUTRITION ============ -->
+    <section class="view" id="view-nutrition">
+      <div class="view-head">
+        <div>
+          <h1>Nutrição</h1>
+          <p class="subtitle">Como está sua alimentação hoje?</p>
+        </div>
+      </div>
+
+      <div class="subtabs" data-group="nutrition">
+        <button class="subtab is-active" data-sub="diario">Diário</button>
+        <button class="subtab" data-sub="biblioteca">Biblioteca</button>
+        <button class="subtab" data-sub="receitas">Receitas</button>
+      </div>
+
+      <!-- DIARIO -->
+      <div class="subview is-active" id="sub-diario">
+        <div class="macro-grid">
+          <div class="macro-card"><span class="macro-ico">🔥</span><div><strong id="macCalNow">1.840</strong><span>/ <span id="macCalGoal">2.400</span> kcal</span></div></div>
+          <div class="macro-card"><span class="macro-ico">🥩</span><div><strong id="macProtNow">128</strong><span>/ <span id="macProtGoal">160</span> g proteína</span></div></div>
+          <div class="macro-card"><span class="macro-ico">🍚</span><div><strong id="macCarbNow">190</strong><span>/ <span id="macCarbGoal">260</span> g carbo</span></div></div>
+          <div class="macro-card"><span class="macro-ico">🥑</span><div><strong id="macFatNow">52</strong><span>/ <span id="macFatGoal">70</span> g gordura</span></div></div>
+        </div>
+
+        <div class="panel analyze-panel">
+          <div class="analyze-copy">
+            <div class="analyze-ico">📸</div>
+            <h2>Analise seu prato</h2>
+            <p>Tire uma foto da sua refeição e deixe o DayFIT estimar os alimentos e valores nutricionais.</p>
+            <button class="btn btn--primary" id="btnAnalyzePlate">Analisar prato</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Diário de hoje</h2>
+            <button class="btn btn--ghost btn--sm" id="btnAddFood">+ Adicionar alimento</button>
+          </div>
+          <div class="meal-list" id="mealList"><!-- injected --></div>
+        </div>
+      </div>
+
+      <!-- BIBLIOTECA -->
+      <div class="subview" id="sub-biblioteca">
+        <div class="search-bar">
+          <span>🔎</span>
+          <input type="text" id="foodSearchInput" placeholder="Pesquisar alimento (frango, arroz, banana...)">
+        </div>
+        <div class="chip-row" id="foodCategoryChips"><!-- injected --></div>
+        <div class="food-grid" id="foodGrid"><!-- injected --></div>
+      </div>
+
+      <!-- RECEITAS -->
+      <div class="subview" id="sub-receitas">
+        <div class="panel analyze-panel" style="margin-bottom:18px;">
+          <div class="analyze-copy">
+            <div class="analyze-ico">✨</div>
+            <h2>Criar receita nova</h2>
+            <p>Digite os alimentos que você tem em casa, ou o nome de um prato pra gente criar uma versão fit dele. Pode deixar em branco pra uma sugestão surpresa.</p>
+            <input type="text" id="recipePreferenceInput" placeholder="ex: frango, batata doce e brócolis — ou 'lasanha'" style="width:100%; max-width:420px; margin:4px 0 14px; background:var(--surface-2); border:1px solid var(--border); border-radius:10px; padding:11px 14px; color:var(--text); font-size:14px;">
+            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+              <button class="btn btn--primary" id="btnGenerateRecipe">Criar receita</button>
+              <button class="btn btn--ghost" id="btnOpenManualRecipe">+ Criar manualmente</button>
+            </div>
+          </div>
+        </div>
+        <div class="chip-row" id="recipeCategoryChips"><!-- injected --></div>
+        <div class="recipe-grid" id="recipeGrid"><!-- injected --></div>
+      </div>
+    </section>
+
+    <!-- ============ WORKOUTS ============ -->
+    <section class="view" id="view-workouts">
+      <div class="view-head">
+        <div>
+          <h1>Treinos</h1>
+          <p class="subtitle">Escolha seu treino de hoje.</p>
+        </div>
+      </div>
+
+      <div class="subtabs" data-group="workouts">
+        <button class="subtab is-active" data-sub="lista">Meus treinos</button>
+        <button class="subtab" data-sub="calendario">Calendário</button>
+      </div>
+
+      <div class="subview is-active" id="sub-lista">
+        <div class="panel" style="margin-bottom:18px;">
+          <div class="panel-head"><h2>Montar treino do zero</h2></div>
+          <p class="muted" style="margin-bottom:14px;">Prefere montar você mesmo? Crie um treino com os exercícios que quiser.</p>
+          <button class="btn btn--ghost" id="btnOpenManualWorkout">+ Criar treino manualmente</button>
+        </div>
+        <div class="workout-grid" id="workoutGrid"><!-- injected --></div>
+      </div>
+
+      <div class="subview" id="sub-calendario">
+        <div class="panel calendar-panel">
+          <div class="calendar-head">
+            <button class="icon-btn" id="calPrev">‹</button>
+            <h2 id="calMonthLabel">SETEMBRO 2026</h2>
+            <button class="icon-btn" id="calNext">›</button>
+          </div>
+          <div class="calendar-grid" id="calendarGrid"><!-- injected --></div>
+        </div>
+        <div class="panel" id="calDayDetail" hidden>
+          <div class="panel-head"><h2 id="calDayTitle">06/09</h2></div>
+          <div id="calDayBody"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GOALS ============ -->
+    <section class="view" id="view-goals">
+      <div class="view-head">
+        <div>
+          <h1>Minhas metas</h1>
+          <p class="subtitle">Acompanhe e ajuste suas metas diárias.</p>
+        </div>
+      </div>
+
+      <div class="subtabs" data-group="goals">
+        <button class="subtab is-active" data-sub="metas">Metas</button>
+        <button class="subtab" data-sub="objetivo">Objetivo</button>
+        <button class="subtab" data-sub="calculadoras">Calculadoras</button>
+      </div>
+
+      <div class="subview is-active" id="sub-metas">
+        <div class="goal-list">
+          <div class="goal-row">
+            <div class="goal-row-label">🔥 Calorias</div>
+            <div class="goal-row-value"><span id="gCal">2.400</span> kcal</div>
+            <div class="bar"><div class="bar-fill bar-fill--orange" style="width:77%"></div></div>
+          </div>
+          <div class="goal-row">
+            <div class="goal-row-label">🥩 Proteína</div>
+            <div class="goal-row-value"><span id="gProt">160</span> g</div>
+            <div class="bar"><div class="bar-fill" style="width:80%"></div></div>
+          </div>
+          <div class="goal-row">
+            <div class="goal-row-label">💧 Água</div>
+            <div class="goal-row-value"><span id="gWater">2,5</span> L</div>
+            <div class="bar"><div class="bar-fill bar-fill--blue" style="width:72%"></div></div>
+          </div>
+          <div class="goal-row">
+            <div class="goal-row-label">🏋️ Treinos</div>
+            <div class="goal-row-value"><span id="gWorkouts">5</span> por semana</div>
+            <div class="bar"><div class="bar-fill bar-fill--purple" style="width:60%"></div></div>
+          </div>
+        </div>
+        <button class="btn btn--primary" id="btnEditGoals">Editar metas</button>
+      </div>
+
+      <div class="subview" id="sub-objetivo">
+        <p class="muted" style="margin-bottom:16px">Escolha o objetivo que melhor descreve o que você busca agora. Isso ajusta suas metas sugeridas de calorias, proteína e treino.</p>
+        <div class="objective-grid" id="objectiveGrid"><!-- injected --></div>
+        <p class="disclaimer">As metas sugeridas são estimativas gerais e não substituem orientação de um profissional de saúde ou nutrição.</p>
+
+        <div class="panel" style="margin-top:20px;">
+          <div class="panel-head"><h2>Plano sob medida</h2></div>
+          <p class="muted" style="margin-bottom:16px;">Monte um treino e uma dieta pensados especificamente para o seu objetivo atual — ou crie o seu do zero.</p>
+          <div class="quick-grid" style="grid-template-columns:repeat(2,1fr)">
+            <button class="quick-btn" id="btnGenerateWorkout"><span>🏋️</span>Criar treino personalizado</button>
+            <button class="quick-btn" id="btnGenerateDiet"><span>🍽️</span>Montar minha dieta</button>
+          </div>
+          <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+            <button class="btn btn--ghost btn--sm" id="btnOpenManualWorkoutFromGoals">+ Montar meu próprio treino</button>
+            <button class="btn btn--ghost btn--sm" id="btnOpenManualDiet">+ Montar minha própria dieta</button>
+          </div>
+        </div>
+
+        <div class="panel" id="myDietPlanPanel" style="margin-top:16px; display:none;">
+          <div class="panel-head"><h2>Sua dieta salva</h2><button class="link-btn" id="btnViewDietPlan">ver detalhes</button></div>
+          <div class="goal-title" id="myDietPlanTitle"></div>
+          <div class="goal-mini-grid">
+            <div><span>Calorias/dia</span><strong id="myDietPlanKcal"></strong></div>
+            <div><span>Proteína/dia</span><strong id="myDietPlanProtein"></strong></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subview" id="sub-calculadoras">
+        <div class="calc-grid">
+          <div class="panel calc-card">
+            <h3>Calculadora de IMC</h3>
+            <div class="calc-fields">
+              <label>Peso (kg)<input type="number" id="calcWeight" placeholder="72"></label>
+              <label>Altura (cm)<input type="number" id="calcHeight" placeholder="178"></label>
+            </div>
+            <button class="btn btn--primary btn--sm" id="btnCalcBmi">Calcular</button>
+            <div class="calc-result" id="bmiResult" hidden></div>
+          </div>
+          <div class="panel calc-card">
+            <h3>Estimativa de calorias</h3>
+            <div class="calc-fields">
+              <label>Peso (kg)<input type="number" id="calCalWeight" placeholder="72"></label>
+              <label>Nível de atividade
+                <select id="calCalActivity">
+                  <option value="1.2">Sedentário</option>
+                  <option value="1.375">Leve</option>
+                  <option value="1.55" selected>Moderado</option>
+                  <option value="1.725">Intenso</option>
+                </select>
+              </label>
+            </div>
+            <button class="btn btn--primary btn--sm" id="btnCalcCal">Calcular</button>
+            <div class="calc-result" id="calResult" hidden></div>
+          </div>
+          <div class="panel calc-card">
+            <h3>Estimativa de proteína</h3>
+            <div class="calc-fields">
+              <label>Peso (kg)<input type="number" id="calProtWeight" placeholder="72"></label>
+              <label>Objetivo
+                <select id="calProtGoalSelect">
+                  <option value="1.6">Manutenção</option>
+                  <option value="2.0" selected>Ganho de massa</option>
+                  <option value="2.2">Redução de gordura</option>
+                </select>
+              </label>
+            </div>
+            <button class="btn btn--primary btn--sm" id="btnCalcProt">Calcular</button>
+            <div class="calc-result" id="protResult" hidden></div>
+          </div>
+          <div class="panel calc-card">
+            <h3>Estimativa de água</h3>
+            <div class="calc-fields">
+              <label>Peso (kg)<input type="number" id="calWaterWeight" placeholder="72"></label>
+            </div>
+            <button class="btn btn--primary btn--sm" id="btnCalcWater">Calcular</button>
+            <div class="calc-result" id="waterResult" hidden></div>
+          </div>
+        </div>
+        <p class="disclaimer">Todos os resultados são estimativas gerais. Necessidades individuais podem variar — consulte um profissional para orientação personalizada.</p>
+      </div>
+    </section>
+
+    <!-- ============ EVOLUTION ============ -->
+    <section class="view" id="view-evolution">
+      <div class="view-head">
+        <div>
+          <h1>Evolução</h1>
+          <p class="subtitle">Seu progresso ao longo do tempo.</p>
+        </div>
+      </div>
+
+      <div class="stat-grid stat-grid--5">
+        <div class="mini-stat"><span>📈 Peso</span><strong id="evWeight">72,8 → 72,1 kg</strong></div>
+        <div class="mini-stat"><span>📊 Calorias méd.</span><strong id="evCal">2.180 kcal/dia</strong></div>
+        <div class="mini-stat"><span>🥩 Proteína méd.</span><strong id="evProt">143 g/dia</strong></div>
+        <div class="mini-stat"><span>🏋️ Treinos no mês</span><strong id="evWorkouts">18</strong></div>
+        <div class="mini-stat"><span>🔥 Sequência</span><strong id="evStreak">12 dias</strong></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h2>Peso — últimos 30 dias</h2></div>
+        <canvas id="weightChartFull" height="220"></canvas>
+      </div>
+
+      <div class="panel-row">
+        <div class="panel">
+          <div class="panel-head"><h2>Calorias por dia</h2></div>
+          <canvas id="calChart" height="180"></canvas>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h2>Treinos por semana</h2></div>
+          <canvas id="workoutChart" height="180"></canvas>
+        </div>
+      </div>
+
+      <div class="panel xp-panel">
+        <div class="panel-head"><h2>Nível &amp; XP</h2></div>
+        <div class="xp-row">
+          <div class="xp-level-badge">Nível <span id="xpLevel">7</span></div>
+          <div class="xp-label" id="xpLevelName">Consistente</div>
+        </div>
+        <div class="bar bar--lg"><div class="bar-fill" id="xpBar" style="width:74%"></div></div>
+        <div class="xp-count"><span id="xpNow">740</span> / <span id="xpMax">1.000</span> XP</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h2>Conquistas</h2></div>
+        <div class="achievement-grid" id="achievementGrid"><!-- injected --></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h2>Histórico de XP</h2></div>
+        <div class="xp-feed" id="xpFeed"><!-- injected --></div>
+      </div>
+    </section>
+
+    <!-- ============ PROFILE ============ -->
+    <section class="view" id="view-profile">
+      <div class="view-head">
+        <div>
+          <h1>Meu perfil</h1>
+          <p class="subtitle">Suas informações e preferências.</p>
+        </div>
+      </div>
+
+      <div class="panel profile-head-panel">
+        <div class="avatar">GA</div>
+        <div>
+          <div class="profile-name" id="profileName">Gabriel Almeida</div>
+          <div class="profile-objective" id="profileObjective">Objetivo: Ganho de massa</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h2>Informações</h2></div>
+        <div class="profile-info-grid">
+          <label>Idade<input type="number" id="pAge" value="27"></label>
+          <label>Altura (cm)<input type="number" id="pHeight" value="178"></label>
+          <label>Peso (kg)<input type="number" id="pWeight" value="72.1"></label>
+          <label>Nível de atividade
+            <select id="pActivity">
+              <option>Sedentário</option>
+              <option selected>Moderado</option>
+              <option>Intenso</option>
+            </select>
+          </label>
+        </div>
+        <div class="bmi-inline">IMC atual: <strong id="pBmi">22.8</strong> <span class="muted">(faixa de peso considerada normal)</span></div>
+        <button class="btn btn--primary btn--sm" id="btnSaveProfile">Salvar alterações</button>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h2>Configurações</h2></div>
+        <div class="settings-list">
+          <div class="settings-row">
+            <span>Notificações</span>
+            <label class="switch"><input type="checkbox" id="toggleNotif" checked><span class="slider"></span></label>
+          </div>
+          <div class="settings-row">
+            <span>Tema escuro</span>
+            <label class="switch"><input type="checkbox" id="toggleTheme" checked><span class="slider"></span></label>
+          </div>
+          <div class="settings-row settings-row--link" data-view="goals">
+            <span>Metas</span><span class="chev">›</span>
+          </div>
+          <div class="settings-row settings-row--link" data-view="subscription">
+            <span>Assinatura</span><span class="chev">›</span>
+          </div>
+          <div class="settings-row settings-row--link" id="btnLogout">
+            <span style="color:var(--red)">Sair da conta</span><span class="chev">›</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SUBSCRIPTION ============ -->
+    <section class="view" id="view-subscription">
+      <div class="view-head">
+        <div>
+          <h1>Planos DayFIT</h1>
+          <p class="subtitle">Escolha o plano ideal para sua evolução.</p>
+        </div>
+      </div>
+
+      <div class="panel billing-status-panel" id="billingStatusPanel" hidden>
+        <div>
+          <span class="muted-tag">Status da sua assinatura</span>
+          <div class="billing-status-value" id="billingStatusValue">—</div>
+        </div>
+        <button class="btn btn--ghost btn--sm" id="btnRefreshBilling">Atualizar status</button>
+      </div>
+
+      <div class="plans-grid">
+        <div class="plan-card">
+          <div class="plan-name">FREE</div>
+          <div class="plan-price">R$0</div>
+          <p class="plan-desc">Recursos básicos para começar.</p>
+          <ul class="plan-features">
+            <li>Diário alimentar simples</li>
+            <li>Registro de treinos manual</li>
+            <li>Metas básicas</li>
+          </ul>
+          <button class="btn btn--ghost" disabled>Plano atual</button>
+        </div>
+
+        <div class="plan-card plan-card--featured">
+          <div class="plan-badge">Mais popular</div>
+          <div class="plan-name">DAYFIT PRO</div>
+          <div class="plan-price">R$13<span>/mês</span></div>
+          <p class="plan-desc">Tudo que você precisa para evoluir de verdade.</p>
+          <ul class="plan-features">
+            <li>Análise de prato por IA</li>
+            <li>Diário alimentar completo</li>
+            <li>Biblioteca de alimentos</li>
+            <li>Todas as receitas</li>
+            <li>Treinos completos</li>
+            <li>Cronômetro</li>
+            <li>Calendário</li>
+            <li>Metas avançadas</li>
+            <li>Histórico</li>
+            <li>Evolução</li>
+            <li>Gamificação</li>
+          </ul>
+          <button class="btn btn--primary" id="btnSubscribePro">Assinar DayFIT PRO</button>
+        </div>
+
+        <div class="plan-card">
+          <div class="plan-name">ANUAL</div>
+          <div class="plan-price">R$130<span>/ano</span></div>
+          <p class="plan-save">Economize R$26 por ano</p>
+          <ul class="plan-features">
+            <li>Todos os recursos PRO</li>
+            <li>Preço fixo garantido</li>
+            <li>Prioridade em novidades</li>
+          </ul>
+          <button class="btn btn--primary" id="btnSubscribeAnnual">Assinar plano anual</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== BOTTOM NAV (mobile) ===== -->
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="bnav-item is-active" data-view="dashboard"><span>◆</span>Início</button>
+    <button class="bnav-item" data-view="nutrition"><span>◇</span>Nutrição</button>
+    <button class="bnav-fab" id="fabQuickAction"><span>+</span></button>
+    <button class="bnav-item" data-view="workouts"><span>▲</span>Treinos</button>
+    <button class="bnav-item" data-view="profile"><span>■</span>Perfil</button>
+  </nav>
+
+</div>
+
+<!-- ===== TOASTS ===== -->
+<div class="toast-stack" id="toastStack"></div>
+
+<!-- ===== MODAL ROOT ===== -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalRoot"></div>
+</div>
+
+<!-- ===== WORKOUT SESSION OVERLAY ===== -->
+<div class="session-overlay" id="sessionOverlay">
+  <div class="session-card">
+    <div class="session-top">
+      <span class="session-tag">🏋️ TREINO EM ANDAMENTO</span>
+      <button class="icon-btn" id="sessionMinimize" title="Minimizar e continuar usando o app">–</button>
+    </div>
+    <div class="session-timer" id="sessionTimer">00:00:00</div>
+    <div class="session-current">
+      <span class="session-current-label">Exercício atual</span>
+      <div class="session-current-name" id="sessionExerciseName">Supino reto</div>
+      <div class="session-current-sets" id="sessionExerciseSets">4 × 10</div>
+    </div>
+    <div class="session-progress-row">
+      <div class="bar"><div class="bar-fill" id="sessionProgressBar"></div></div>
+      <span id="sessionProgressLabel">0 / 12 exercícios</span>
+    </div>
+    <div class="session-controls">
+      <button class="session-btn" id="sessionPause">⏸ Pausar</button>
+      <button class="session-btn" id="sessionNext">⏭ Próximo</button>
+      <button class="session-btn session-btn--primary" id="sessionComplete">✓ Concluir série</button>
+    </div>
+    <button class="btn btn--danger" id="sessionFinish">🏁 Finalizar treino</button>
+  </div>
+</div>
+
+<!-- ===== FLOATING MINI TIMER (workout keeps running in background) ===== -->
+<button class="mini-timer-bar" id="miniTimerBar">
+  <span class="mini-timer-dot"></span>
+  <span class="mini-timer-name" id="miniTimerName">Supino reto</span>
+  <span class="mini-timer-clock" id="miniTimerClock">00:00:00</span>
+  <span class="mini-timer-expand">Expandir ⤢</span>
+</button>
+
+<script src="api.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
